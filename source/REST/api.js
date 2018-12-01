@@ -1,34 +1,42 @@
-import { MAIN_URL, TOKEN } from './config';
+import { MAIN_URL, TOKEN } from "./config";
 
 const headers = {
-    "Authorization": TOKEN,
-    "Content-Type": "application/json"
+    Authorization:  TOKEN,
+    "Content-Type": "application/json",
 };
+
 export const api = {
-    fetchTasks: async () => {
-        return fetch(MAIN_URL, {
-            method: 'GET',
-            headers
-        });
-    },
-    createTasks: async (data) => {
-        return fetch(MAIN_URL, {
-            method: 'POST',
+    fetchTasks: () =>
+        fetch(MAIN_URL, {
+            method: "GET",
             headers,
-            body: JSON.stringify(data)
-        });
-    },
-    updateTask: async (data) => {
-        return fetch(MAIN_URL, {
-            method: 'PUT',
+        })
+            .then((response) => response.json())
+            .then((response) => response.data),
+
+    createTasks: (message) =>
+        fetch(MAIN_URL, {
+            method: "POST",
             headers,
-            body: JSON.stringify(data)
-        });
-    },
-    deleteTask: async (data) => {
-        return fetch(`${MAIN_URL}/${data.id}`, {
-            method: 'DELETE',
-            headers
-        });
-    },
+            body:   JSON.stringify(message),
+        })
+            .then((response) => response.json())
+            .then((response) => response.data),
+
+    updateTask: (task) =>
+        fetch(MAIN_URL, {
+            method: "PUT",
+            headers,
+            body:   JSON.stringify(task),
+        })
+            .then((response) => response.json())
+            .then((response) => response.data),
+
+    deleteTask: (data) =>
+        fetch(`${MAIN_URL}/${data.id}`, {
+            method: "DELETE",
+            headers,
+        })
+            .then((response) => response.json())
+            .then((response) => response.data),
 };

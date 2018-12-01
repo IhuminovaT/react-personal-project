@@ -1,92 +1,73 @@
 // Core
-import React, { Component } from 'react';
-import Header from '../../components/Header';
-import Footer from '../../components/Footer';
-import TaskList from '../../components/TaskList';
-import NewTask from '../../components/NewTask';
-import Spinner from '../../components/Spinner';
-import { filterTasksByMessage } from '../../instruments/helpers';
+import React, { Component } from "react";
+import Header from "../../components/Header";
+import Footer from "../../components/Footer";
+import TaskList from "../../components/TaskList";
+import NewTask from "../../components/NewTask";
+import Spinner from "../../components/Spinner";
+import { filterTasksByMessage } from "../../instruments/helpers";
 
 // Instruments
-import Styles from './styles.m.css';
-import { api } from '../../REST'; // ! Импорт модуля API должен иметь именно такой вид (import { api } from '../../REST')
+import Styles from "./styles.m.css";
+import { api } from "../../REST"; // ! Импорт модуля API должен иметь именно такой вид (import { api } from '../../REST')
 
 class Scheduler extends Component {
     state = {
-        tasks: [],
-        searchValue: ''
+        tasks:       [],
+        searchValue: "",
     };
 
-    componentDidMount() {
+    componentDidMount () {
         this.setState({
-            fetchInProgress: true
+            fetchInProgress: true,
         });
 
         api.fetchTasks()
-            .then(response => response.json())
-            .then(data => {
+            .then((data) => {
                 this.setState({
                     fetchInProgress: false,
-                    tasks: data.data
+                    tasks:           data,
                 });
-                console.log('fetch data', data);
-            })
-            .catch(e => {
-                this.setState({
-                    fetchInProgress: false
-                });
-                console.log('error', e);
+                console.log("fetch data", data);
             });
     }
 
     _addNewTask = (message) => {
-        let tasks = [...this.state.tasks];
+        const tasks = [...this.state.tasks];
 
         this.setState({
-            fetchInProgress: true
+            fetchInProgress: true,
         });
 
-        api.createTasks({ message: message })
-            .then(response => response.json())
-            .then(data => {
+        api.createTasks({ message })
+            .then((data) => {
                 this.setState({
-                    fetchInProgress: false
+                    fetchInProgress: false,
                 });
 
-                tasks.push(data.data);
+                tasks.push(data);
                 this.setState({
-                    tasks
+                    tasks,
                 });
-            })
-            .catch(e => {
-                this.setState({
-                    fetchInProgress: false
-                });
-                console.log('error', e);
             });
-
     };
 
-    _updateTask = newTask => {
-        api.updateTask([ newTask ])
-            .then(response => response.json())
-            .then(data => {
+    _updateTask = (newTask) => {
+        api.updateTask([newTask])
+            .then((data) => {
                 this.setState({
-                    fetchInProgress: false
+                    fetchInProgress: false,
                 });
 
                 this.setState({
-                    tasks: this.state.tasks.map(task => {
-                        if (task.id == data.data[0].id) return data.data[0];
+                    tasks: this.state.tasks.map((task) => {
+                        if (task.id == data[0].id) {
+                            return data[0];
+                        }
+
                         return task;
-                    })
+                    }),
                 });
-            })
-            .catch(e => {
-                this.setState({
-                    fetchInProgress: false
-                });
-                console.log('error', e);
             });
     };
 
@@ -94,53 +75,41 @@ class Scheduler extends Component {
         api.deleteTask(deletedTask)
             .then(() => {
                 this.setState({
-                    fetchInProgress: false
+                    fetchInProgress: false,
                 });
                 this.setState({
-                    tasks: this.state.tasks.filter(task => {
-                        return (task.id != deletedTask.id);
-                    })
+                    tasks: this.state.tasks.filter((task) => {
+                        return task.id != deletedTask.id;
+                    }),
                 });
-            })
-            .catch(e => {
-                this.setState({
-                    fetchInProgress: false
-                });
-                console.log('error', e);
             });
     };
 
     _completeAllTasks = () => {
-        const tasks = this.state.tasks.map(task => {
+        const tasks = this.state.tasks.map((task) => {
             task.completed = true;
+
             return task;
         });
 
         api.updateTask(tasks)
-            .then(response => response.json())
-            .then(data => {
+            .then((data) => {
                 this.setState({
-                    fetchInProgress: false
+                    fetchInProgress: false,
                 });
                 this.setState({
-                    tasks: data.data
+                    tasks: data,
                 });
-            })
-            .catch(e => {
-                this.setState({
-                    fetchInProgress: false
-                });
-                console.log('error', e);
             });
     };
 
     _getUncompletedTasks = () => {
-        return this.state.tasks.filter(task => !task.completed)
+        return this.state.tasks.filter((task) => !task.completed);
     };
 
-    _updateSearchValue = (value) => {
+    _updateTasksFilter = (value) => {
         this.setState({
-            searchValue: value
+            searchValue: value,
         });
     };
 
@@ -150,22 +119,28 @@ class Scheduler extends Component {
         return (
             <section className = { Styles.scheduler }>
                 <main>
-                    { this.state.fetchInProgress ? <Spinner /> : '' }
+                    <Spinner isSpinning = { this.state.fetchInProgress } />
 
-                    <Header searchValue = { this.state.searchValue }
-                            _updateSearchValue = { this._updateSearchValue } />
+                    <Header
+                        searchValue = { this.state.searchValue }
+                        _updateTasksFilter = { this._updateTasksFilter }
+                    />
 
                     <section>
-
                         <NewTask _addNewTask = { this._addNewTask } />
-                        <TaskList tasks = { filterTasksByMessage(this.state.tasks, this.state.searchValue) }
-                                  _updateTask = { this._updateTask }
-                                  _deleteTask = { this._deleteTask } />
-
+                        <TaskList
+                            tasks = { filterTasksByMessage(
+                                this.state.tasks,
+                                this.state.searchValue
+                            ) }
+                            _updateTask = { this._updateTask }
+                            _deleteTask = { this._deleteTask }
+                        />
                     </section>
 
-                    <Footer allTaskCompleted = { allTaskCompleted }
-                            _completeAllTasks = { this._completeAllTasks }
+                    <Footer
+                        allTaskCompleted = { allTaskCompleted }
+                        _completeAllTasks = { this._completeAllTasks }
                     />
                 </main>
             </section>

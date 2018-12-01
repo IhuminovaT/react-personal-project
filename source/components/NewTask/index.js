@@ -1,42 +1,43 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
 class NewTask extends Component {
     state = {
-        message: ''
+        message: "",
     };
 
     _handleClick = (e) => {
         e.preventDefault();
-        if (!this.state.message.length) return;
+        if (!this.state.message.length) {
+            return;
+        }
 
         this.props._addNewTask(this.state.message);
 
         this.setState({
-           message: ''
+            message: "",
         });
     };
 
-    _handleChange = e => {
+    _handleChange = (e) => {
         this.setState({
             message: e.target.value,
         });
     };
 
-
-    render() {
+    render () {
         return (
             <form>
-                <input type = "text"
-                       maxLength = "50"
-                       placeholder = "Описaние моей новой задачи"
-                       value = { this.state.message }
-                       onChange = { this._handleChange } />
+                <input
+                    type = 'text'
+                    maxLength = '50'
+                    placeholder = 'Описaние моей новой задачи'
+                    value = { this.state.message }
+                    onChange = { this._handleChange }
+                />
 
-                <button onClick = { this._handleClick } >
-                    Добавить задачу
-                </button>
+                <button onClick = { this._handleClick }>Добавить задачу</button>
             </form>
-        )
+        );
     }
 }
 

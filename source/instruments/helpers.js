@@ -1,9 +1,9 @@
 // Core
-import moment from 'moment';
-import { v4 } from 'uuid';
+import moment from "moment";
+import { v4 } from "uuid";
 
 export function getDisplayName (WrappedComponent) {
-    return WrappedComponent.displayName || WrappedComponent.name || 'Component';
+    return WrappedComponent.displayName || WrappedComponent.name || "Component";
 }
 
 export const sortTasksByDate = (tasks) => {
@@ -45,11 +45,13 @@ export const sortTasksByGroup = (tasks) => {
 };
 
 export const filterTasksByMessage = (tasks, value) => {
-    const filtered = tasks.filter((task) => ~task.message.toLowerCase().indexOf(value));
+    if (!tasks) return [];
 
-    return [
-        ...filtered
-    ];
+    const filtered = tasks.filter(
+        (task) => ~task.message.toLowerCase().indexOf(value)
+    );
+
+    return [...filtered];
 };
 
 export class BaseTaskModel {
@@ -57,7 +59,7 @@ export class BaseTaskModel {
         id = v4(),
         completed = false,
         favorite = false,
-        message = 'Выполнить важную задачу (создано в конструкторе).',
+        message = "Выполнить важную задачу (создано в конструкторе)."
     ) {
         this.id = id;
         this.completed = completed;
