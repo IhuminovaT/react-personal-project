@@ -44,6 +44,14 @@ export const sortTasksByGroup = (tasks) => {
     ];
 };
 
+export const filterTasksByMessage = (tasks, value) => {
+    const filtered = tasks.filter((task) => ~task.message.toLowerCase().indexOf(value));
+
+    return [
+        ...filtered
+    ];
+};
+
 export class BaseTaskModel {
     constructor (
         id = v4(),
